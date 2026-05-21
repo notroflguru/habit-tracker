@@ -3,7 +3,7 @@ import java.util.*;
 public class Main {
     private static Scanner console = new Scanner(System.in);
     private static Service service;
-    private static authService authService = new authService();
+    private static AuthService authService = new AuthService();
     public static void main(String[] args) {
 
         User currentUser = null;
@@ -102,103 +102,5 @@ public class Main {
 
     private static void viewHabits() {
         System.out.println(service.viewHabits());
-    }
-}
-
-
-class Habit {
-    String habitName;
-    String description;
-    String frequency;
-
-    Habit(String habitName, String description, String frequency) {
-        this.habitName = habitName;
-        this.description = description;
-        this.frequency = frequency;
-    }
-
-
-    @Override
-    public String toString() {
-        return (habitName + " | " + description + " | " + frequency + " ");
-    }
-}
-
-
-class User {
-    private String login;
-    private String passwordHash;
-
-    User(String login, String passwordHash) {
-        this.login = login;
-        this.passwordHash = passwordHash;
-    }
-
-
-    // Геттеры
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-    public String getLogin() {
-        return login;
-    }
-}
-
-
-class Service{
-    User user;
-
-    // Habit set
-    private Set<Habit> habitSet;
-
-    Service(User currentUser) {
-        this.user = currentUser;
-        this.habitSet = new HashSet<>();
-    }
-
-    public Set<Habit> viewHabits() {
-        return habitSet;
-    }
-
-    public Habit createHabit(String name, String description, String frequency) {
-        Habit newHabit = new Habit(name, description, frequency);
-        if (!frequency.equals("Ежедневно") && !frequency.equals("Еженедельно") && !frequency.equals("Ежемесячно")) {
-            throw new IllegalArgumentException("Неверная частота");
-        }
-        if (habitSet.contains(newHabit)) {
-            throw new IllegalArgumentException("Такая привычка уже существует");
-        }
-        habitSet.add(newHabit);
-        return newHabit;
-    }
-
-}
-
-
-class authService{
-    private static Map<String, User> users = new HashMap<>();
-
-    public User userLogin(String login, String passwordHash) {
-        User currentUser = users.get(login);
-        if (currentUser == null) {
-            throw new IllegalArgumentException("Данный пользователь не найден!");
-        }
-        if (currentUser.getPasswordHash().equals(passwordHash)) {
-            return currentUser;
-        } else {
-            throw new IllegalArgumentException("Неверный пароль!");
-        }
-    }
-
-
-    public User userRegister(String login, String passwordHash) {
-        User currentUser = users.get(login);
-        if (currentUser != null) {
-            throw new IllegalArgumentException("Пользователь с таким логином уже существует!");
-        } else {
-            User newUser = new User(login, passwordHash);
-            users.put(login, newUser);
-            return newUser;
-        }
     }
 }
