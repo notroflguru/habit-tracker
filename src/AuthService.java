@@ -1,11 +1,12 @@
-import java.util.HashMap;
-import java.util.Map;
-
 public class AuthService {
-    private static Map<String, User> users = new HashMap<>();
+    private UserRepository userRepository;
+
+    public AuthService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User userLogin(String login, String passwordHash) {
-        User currentUser = users.get(login);
+        User currentUser = userRepository.findByLogin(login);
         if (currentUser == null) {
             throw new IllegalArgumentException("Данный пользователь не найден!");
         }
@@ -18,12 +19,12 @@ public class AuthService {
 
 
     public User userRegister(String login, String passwordHash) {
-        User currentUser = users.get(login);
-        if (currentUser != null) {
+        User user = userRepository.findByLogin(login);
+        if (user != null) {
             throw new IllegalArgumentException("Пользователь с таким логином уже существует!");
         } else {
             User newUser = new User(login, passwordHash);
-            users.put(login, newUser);
+            userRepository.addUser(newUser);
             return newUser;
         }
     }

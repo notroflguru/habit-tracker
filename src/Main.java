@@ -3,9 +3,9 @@ import java.util.*;
 public class Main {
     private static Scanner console = new Scanner(System.in);
     private static Service service;
-    private static AuthService authService = new AuthService();
+    private static AuthService authService;
     public static void main(String[] args) {
-
+        authService = new AuthService(new InMemoryUserRepository());
         User currentUser = null;
         while (currentUser==null) {
             currentUser = loginMenu();

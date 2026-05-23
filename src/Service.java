@@ -25,6 +25,10 @@ public class Service{
 
     public void deleteHabit(String name) {
         Habit habit = getHabitByName(name);
+        if (habit == null) {
+            System.out.println("Такой привычки не существует!");
+            return;
+        }
         habitRepository.delete(habit);
         System.out.println("Успешно удалили привычку " + habit);
     }
