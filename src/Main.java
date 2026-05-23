@@ -9,30 +9,13 @@ public class Main {
         User currentUser = null;
         while (currentUser==null) {
             currentUser = loginMenu();
-            service = new Service(currentUser);
         }
+        service = new Service(currentUser, new InMemoryHabitRepository());
 
         while (true) {
             mainMenu();
         }
 
-    }
-
-
-    private static Habit createHabit() {
-        System.out.println("Введите название новой привычки");
-        String newName = console.nextLine();
-        System.out.println("Введите описание привычки");
-        String newDescription = console.nextLine();
-        System.out.println("Введите частоту выполнения привычки (ежедневно, еженедельно или ежемесячно)");
-        String newFrequency = console.nextLine();
-        try {
-            Habit newHabit = service.createHabit(newName, newDescription, newFrequency);
-            return newHabit;
-        } catch (IllegalArgumentException iae) {
-            System.out.println(iae.getMessage());
-        }
-        return null;
     }
 
 
@@ -87,6 +70,7 @@ public class Main {
         System.out.println("=== Трекер привычек ===");
         System.out.println("1. Создать привычку");
         System.out.println("2. Посмотреть привычки");
+        System.out.println("3. Удалить привычку");
         System.out.println("0. Выход");
 
         Byte command = console.nextByte();
@@ -96,6 +80,22 @@ public class Main {
             case 0: System.exit(0);
             case 1: createHabit(); break;
             case 2: viewHabits(); break;
+            case 3: deleteHabit(); break;
+        }
+    }
+
+
+    private static void createHabit() {
+        System.out.println("Введите название новой привычки");
+        String newName = console.nextLine();
+        System.out.println("Введите описание привычки");
+        String newDescription = console.nextLine();
+        System.out.println("Введите частоту выполнения привычки (ежедневно, еженедельно или ежемесячно)");
+        String newFrequency = console.nextLine();
+        try {
+            service.createHabit(newName, newDescription, newFrequency.toLowerCase());
+        } catch (IllegalArgumentException iae) {
+            System.out.println(iae.getMessage());
         }
     }
 
@@ -103,4 +103,17 @@ public class Main {
     private static void viewHabits() {
         System.out.println(service.viewHabits());
     }
+
+
+    private static void markHabit() {
+        return;
+    }
+
+    private static void deleteHabit() {
+        System.out.println("Название привычки, которую нужно удалить?");
+        String name = console.nextLine();
+        service.deleteHabit(name);
+    }
 }
+
+

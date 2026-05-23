@@ -1,31 +1,36 @@
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 
 public class Service{
     User user;
+    private final HabitRepository habitRepository;
 
-    // Habit set
-    private Set<Habit> habitSet;
-
-    Service(User currentUser) {
+    Service(User currentUser, HabitRepository habitRepository) {
         this.user = currentUser;
-        this.habitSet = new HashSet<>();
+        this.habitRepository = habitRepository;
     }
 
-    public Set<Habit> viewHabits() {
-        return habitSet;
+    public Collection<Habit> viewHabits() {
+        return habitRepository.findAll();
     }
 
-    public Habit createHabit(String name, String description, String frequency) {
-        Habit newHabit = new Habit(name, description, frequency);
-        if (!frequency.equals("Ежедневно") && !frequency.equals("Еженедельно") && !frequency.equals("Ежемесячно")) {
+    public void createHabit(String name, String description, String frequency) {
+        Habit newHabit = new Habit(name, description, frequency.toLowerCase());
+        if (!newHabit.getFrequency().equals("ежедневно") && !newHabit.getFrequency().equals("еженедельно") && !newHabit.getFrequency().equals("ежемесячно")) {
             throw new IllegalArgumentException("Неверная частота");
         }
-        if (habitSet.contains(newHabit)) {
-            throw new IllegalArgumentException("Такая привычка уже существует");
-        }
-        habitSet.add(newHabit);
-        return newHabit;
+        if (!habitRepository.existsByName(newHabit.getHabitName())) {
+        habitRepository.add(newHabit);}
+        else {throw new IllegalArgumentException("Ошибка. Такая привычка уже существует");}
+    }
+
+    public void deleteHabit(String name) {
+        Habit habit = getHabitByName(name);
+        habitRepository.delete(habit);
+        System.out.println("Успешно удалили привычку " + habit);
+    }
+
+    public Habit getHabitByName(String name) {
+        return habitRepository.getHabitByName(name);
     }
 
 }

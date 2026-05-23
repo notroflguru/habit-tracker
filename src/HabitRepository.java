@@ -1,10 +1,9 @@
-package Repositories;
-
-
-import java.util.Set;
+import java.util.Collection;
 
 public interface HabitRepository {
-    public Habit add(Habit habit);
-    public Set<Habit> findAll();
-    public Habit exists(Habit habit);
+    void add(Habit habit);
+    Collection<Habit> findAll();
+    boolean existsByName(String name);
+    Habit getHabitByName(String name);
+    void delete(Habit habit);
 }
