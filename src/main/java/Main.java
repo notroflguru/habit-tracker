@@ -1,15 +1,23 @@
 import java.util.*;
-
+// TODO ИЗУЧИТЬ ДОКЕР,
+//  POSTGRESQL,
+//  JDBC for both UserRepository and HabitRepository
 public class Main {
     private static Scanner console = new Scanner(System.in);
     private static Service service;
+    private static UserRepository userRepo = new JdbcUserRepository(
+            "jdbc:postgresql://localhost:5432/habit_tracker",
+            "postgres",
+            "secret"
+    );
     private static AuthService authService;
     public static void main(String[] args) {
-        authService = new AuthService(new InMemoryUserRepository());
+        authService = new AuthService(userRepo);
         User currentUser = null;
         while (currentUser==null) {
             currentUser = loginMenu();
         }
+        System.out.println("Вы успешно вошли, " + currentUser.getLogin());
         service = new Service(currentUser, new InMemoryHabitRepository());
 
         while (true) {
@@ -94,6 +102,7 @@ public class Main {
         String newFrequency = console.nextLine();
         try {
             service.createHabit(newName, newDescription, newFrequency.toLowerCase());
+            System.out.println("Привычка [" + newName + " | " + newDescription + " | " + newFrequency + "] успешно создана!");
         } catch (IllegalArgumentException iae) {
             System.out.println(iae.getMessage());
         }
