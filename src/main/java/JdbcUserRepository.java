@@ -24,7 +24,7 @@ public class JdbcUserRepository implements UserRepository{
         PreparedStatement statement = connection.prepareStatement("SELECT id, login, password_hash FROM users WHERE login = ?")){
             statement.setString(1, login);
             try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next() == true) {
+                if (rs.next()) {
                     User user = new User(rs.getString("login"), rs.getString("password_hash"));
                     user.setId(rs.getInt("id"));
                     return user;

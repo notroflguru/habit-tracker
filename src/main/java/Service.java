@@ -1,4 +1,4 @@
-import java.util.Collection;
+import java.util.ArrayList;
 
 public class Service{
     User user;
@@ -9,22 +9,20 @@ public class Service{
         this.habitRepository = habitRepository;
     }
 
-    public Collection<Habit> viewHabits() {
+    public ArrayList<Habit> viewHabits() {
         return habitRepository.findAll();
     }
 
     public void createHabit(String name, String description, String frequency) {
         Habit newHabit = new Habit(name, description, frequency.toLowerCase());
         if (!newHabit.getFrequency().equals("ежедневно") && !newHabit.getFrequency().equals("еженедельно") && !newHabit.getFrequency().equals("ежемесячно")) {
-            throw new IllegalArgumentException("Неверная частота");
+            throw new RuntimeException("Неверная частота");
         }
-        if (!habitRepository.existsByName(newHabit.getHabitName())) {
-        habitRepository.add(newHabit);}
-        else {throw new IllegalArgumentException("Ошибка. Такая привычка уже существует");}
+        habitRepository.add(newHabit);
     }
 
-    public void deleteHabit(String name) {
-        Habit habit = getHabitByName(name);
+    public void deleteHabit(int id) {
+        Habit habit = getHabitById(id);
         if (habit == null) {
             System.out.println("Такой привычки не существует!");
             return;
@@ -33,8 +31,8 @@ public class Service{
         System.out.println("Успешно удалили привычку " + habit);
     }
 
-    public Habit getHabitByName(String name) {
-        return habitRepository.getHabitByName(name);
+    public Habit getHabitById(int id) {
+        return habitRepository.getHabitById(id);
     }
 
 }

@@ -1,7 +1,5 @@
 import java.util.*;
-// TODO ИЗУЧИТЬ ДОКЕР,
-//  POSTGRESQL,
-//  JDBC for both UserRepository and HabitRepository
+
 public class Main {
     private static Scanner console = new Scanner(System.in);
     private static Service service;
@@ -18,7 +16,14 @@ public class Main {
             currentUser = loginMenu();
         }
         System.out.println("Вы успешно вошли, " + currentUser.getLogin());
-        service = new Service(currentUser, new InMemoryHabitRepository());
+        HabitRepository habitRepo = new JdbcHabitRepository(
+                "jdbc:postgresql://localhost:5432/habit_tracker",
+                "postgres",
+                "secret",
+                currentUser.getUserId()
+        );
+
+        service = new Service(currentUser, habitRepo);
 
         while (true) {
             mainMenu();
@@ -103,14 +108,23 @@ public class Main {
         try {
             service.createHabit(newName, newDescription, newFrequency.toLowerCase());
             System.out.println("Привычка [" + newName + " | " + newDescription + " | " + newFrequency + "] успешно создана!");
-        } catch (IllegalArgumentException iae) {
-            System.out.println(iae.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
     }
 
 
     private static void viewHabits() {
-        System.out.println(service.viewHabits());
+        ArrayList<Habit> list = service.viewHabits();
+        if (list==null) {
+            System.out.println("У вас ещё нет привычек!");
+        } else {
+            System.out.println("id | название | описание | частота");
+            for (Habit element : list) {
+                System.out.println(element);
+            }
+        }
+
     }
 
 
@@ -119,9 +133,9 @@ public class Main {
     }
 
     private static void deleteHabit() {
-        System.out.println("Название привычки, которую нужно удалить?");
-        String name = console.nextLine();
-        service.deleteHabit(name);
+        System.out.println("ID привычки, которую нужно удалить?");
+        int id = console.nextInt();
+        service.deleteHabit(id);
     }
 }
 

@@ -1,4 +1,5 @@
 public class Habit {
+    private int id;
     private String habitName;
     private String description;
     private String frequency;
@@ -22,10 +23,19 @@ public class Habit {
         return frequency;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    // Сеттеры
+    public void setId(int id) {
+        this.id = id;
+    }
+
 
     @Override
     public String toString() {
-        return (habitName + " | " + description + " | " + frequency);
+        return (id + " | " + habitName + " | " + description + " | " + frequency);
     }
 
 

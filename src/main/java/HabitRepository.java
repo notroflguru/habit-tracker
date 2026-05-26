@@ -1,9 +1,8 @@
-import java.util.Collection;
+import java.util.ArrayList;
 
 public interface HabitRepository {
     void add(Habit habit);
-    Collection<Habit> findAll();
-    boolean existsByName(String name);
-    Habit getHabitByName(String name);
+    ArrayList<Habit> findAll();
+    Habit getHabitById(int id);
     void delete(Habit habit);
 }
