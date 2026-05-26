@@ -131,10 +131,6 @@ public class Main {
     }
 
 
-    private static void markHabit() {
-        return;
-    }
-
     private static void deleteHabit() {
         System.out.println("ID привычки, которую нужно удалить?");
         int id = console.nextInt();
