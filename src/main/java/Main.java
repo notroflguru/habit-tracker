@@ -2,18 +2,15 @@ import java.util.*;
 
 public class Main {
     private static Scanner console = new Scanner(System.in);
-    private static Service service;
-    private static UserRepository userRepo = new JdbcUserRepository(
-            "jdbc:postgresql://localhost:5432/habit_tracker",
-            "postgres",
-            "secret"
-    );
-    private static AuthService authService;
     public static void main(String[] args) {
-        authService = new AuthService(userRepo);
+        UserRepository userRepo = new JdbcUserRepository(
+                "jdbc:postgresql://localhost:5432/habit_tracker",
+                "postgres",
+                "secret");
+        AuthService authService = new AuthService(userRepo);
         User currentUser = null;
         while (currentUser==null) {
-            currentUser = loginMenu();
+            currentUser = loginMenu(authService);
         }
         System.out.println("Вы успешно вошли, " + currentUser.getLogin());
         HabitRepository habitRepo = new JdbcHabitRepository(
@@ -23,18 +20,18 @@ public class Main {
                 currentUser.getUserId()
         );
 
-        service = new Service(currentUser, habitRepo);
+        Service service = new Service(currentUser, habitRepo);
 
         System.out.println("=== Трекер привычек ===");
 
         while (true) {
-            mainMenu();
+            mainMenu(service);
         }
 
     }
 
 
-    private static User loginMenu() {
+    private static User loginMenu(AuthService authService) {
         System.out.println("1. Вход");
         System.out.println("2. Регистрация");
         System.out.println("0. Выход");
@@ -44,13 +41,13 @@ public class Main {
         switch (command) {
             default: System.out.println("Команда не распознана!"); return null;
             case 0: System.exit(0);
-            case 1: return userLogin();
-            case 2: return userRegister();
+            case 1: return userLogin(authService);
+            case 2: return userRegister(authService);
         }
     }
 
 
-    private static User userLogin() {
+    private static User userLogin(AuthService authService) {
         System.out.println("Введите логин:");
         String login = console.nextLine();
         System.out.println("Введите пароль:");
@@ -65,7 +62,7 @@ public class Main {
     }
 
 
-    private static User userRegister() {
+    private static User userRegister(AuthService authService) {
         System.out.println("Введите логин:");
         String login = console.nextLine();
         System.out.println("Введите пароль:");
@@ -81,7 +78,7 @@ public class Main {
     }
 
 
-    private static void mainMenu() {
+    private static void mainMenu(Service service) {
         System.out.println("1. Создать привычку");
         System.out.println("2. Посмотреть привычки");
         System.out.println("3. Удалить привычку");
@@ -92,14 +89,14 @@ public class Main {
         switch (command) {
             default: System.out.println("Команда не распознана!"); return;
             case 0: System.exit(0);
-            case 1: createHabit(); break;
-            case 2: viewHabits(); break;
-            case 3: deleteHabit(); break;
+            case 1: createHabit(service); break;
+            case 2: viewHabits(service); break;
+            case 3: deleteHabit(service); break;
         }
     }
 
 
-    private static void createHabit() {
+    private static void createHabit(Service service) {
         System.out.println("Введите название новой привычки");
         String newName = console.nextLine();
         System.out.println("Введите описание привычки");
@@ -115,7 +112,7 @@ public class Main {
     }
 
 
-    private static void viewHabits() {
+    private static void viewHabits(Service service) {
         ArrayList<Habit> habits = service.viewHabits();
         if (habits==null) {
             System.out.println("У вас ещё нет привычек!");
@@ -131,7 +128,7 @@ public class Main {
     }
 
 
-    private static void deleteHabit() {
+    private static void deleteHabit(Service service) {
         System.out.println("ID привычки, которую нужно удалить?");
         int id = console.nextInt();
         service.deleteHabit(id);
