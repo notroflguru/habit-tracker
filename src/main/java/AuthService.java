@@ -1,3 +1,5 @@
+import org.mindrot.jbcrypt.BCrypt;
+
 public class AuthService {
     private UserRepository userRepository;
 
@@ -5,13 +7,13 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public User userLogin(String login, String passwordHash) {
+    public User userLogin(String login, String password) {
         try {
             User currentUser = userRepository.findByLogin(login);
             if (currentUser == null) {
                 throw new RuntimeException("Пользователя с таким логином не существует");
             }
-            if (currentUser.getPasswordHash().equals(passwordHash)) {
+            if (BCrypt.checkpw(password, currentUser.getPasswordHash())) {
                 return currentUser;
             } else {
                 throw new RuntimeException("Неверный пароль!");
@@ -22,8 +24,9 @@ public class AuthService {
     }
 
 
-    public User userRegister(String login, String passwordHash) {
+    public User userRegister(String login, String password) {
         try {
+            String passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
             User user = userRepository.findByLogin(login);
             if (user != null) {
                 throw new IllegalArgumentException("Пользователь с таким логином уже существует!");
