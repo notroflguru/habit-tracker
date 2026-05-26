@@ -25,6 +25,8 @@ public class Main {
 
         service = new Service(currentUser, habitRepo);
 
+        System.out.println("=== Трекер привычек ===");
+
         while (true) {
             mainMenu();
         }
@@ -80,7 +82,6 @@ public class Main {
 
 
     private static void mainMenu() {
-        System.out.println("=== Трекер привычек ===");
         System.out.println("1. Создать привычку");
         System.out.println("2. Посмотреть привычки");
         System.out.println("3. Удалить привычку");
@@ -115,14 +116,16 @@ public class Main {
 
 
     private static void viewHabits() {
-        ArrayList<Habit> list = service.viewHabits();
-        if (list==null) {
+        ArrayList<Habit> habits = service.viewHabits();
+        if (habits==null) {
             System.out.println("У вас ещё нет привычек!");
         } else {
-            System.out.println("id | название | описание | частота");
-            for (Habit element : list) {
-                System.out.println(element);
+            System.out.printf("%-4s | %-20s | %-30s | %-12s%n", "id", "название", "описание", "частота");
+            System.out.println("=".repeat(75));
+            for (Habit h : habits) {
+                System.out.printf("%-4d | %-20s | %-30s | %-12s%n", h.getId(), h.getHabitName(), h.getDescription(), h.getFrequency());
             }
+            System.out.println("=".repeat(75));
         }
 
     }
